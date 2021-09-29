@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://shashank-shekhar.github.io/sitemap.xml
