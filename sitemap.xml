@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="https://shashank-shekhar.github.io/sitemap.xsl"?>
+<?xml-stylesheet type="text/xsl" href="https://shashankshekhar.net/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 <url>
-<loc>https://shashank-shekhar.github.io/</loc>
+<loc>https://shashankshekhar.net/</loc>
 </url>
 <url>
-<loc>https://shashank-shekhar.github.io/page/2/</loc>
+<loc>https://shashankshekhar.net/page/2/</loc>
 </url>
 <url>
-<loc>https://shashank-shekhar.github.io/second-post.html</loc>
+<loc>https://shashankshekhar.net/page/3/</loc>
+</url>
+<url>
+<loc>https://shashankshekhar.net/second-post/</loc>
 <lastmod>2021-09-28T12:58:43-07:00</lastmod>
 </url>
 <url>
-<loc>https://shashank-shekhar.github.io/this-is-my-first-post.html</loc>
-<lastmod>2021-09-28T12:57:07-07:00</lastmod>
+<loc>https://shashankshekhar.net/third/</loc>
+<lastmod>2021-09-29T13:44:29-07:00</lastmod>
+</url>
+<url>
+<loc>https://shashankshekhar.net/this-is-my-first-post/</loc>
+<lastmod>2021-09-29T12:11:03-07:00</lastmod>
 </url>
 </urlset>
