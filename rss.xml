@@ -7,9 +7,36 @@
     <link>http:&#x2F;&#x2F;localhost:3000</link>
     <description>A blog powered by Monadics</description>
     <language>en</language>
-    <lastBuildDate>Thu, 16 Oct 2025 05:12:12 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 16 Oct 2025 05:35:48 GMT</lastBuildDate>
     <atom:link href="http:&#x2F;&#x2F;localhost:3000/rss.xml" rel="self" type="application/rss+xml" />
     <copyright>All rights reserved 2025, Your Namess</copyright>
+    <item>
+      <title>Free Azure!!</title>
+      <link>http:&#x2F;&#x2F;localhost:3000&#x2F;free-azure.html</link>
+      <guid isPermaLink="true">http:&#x2F;&#x2F;localhost:3000&#x2F;free-azure.html</guid>
+      <pubDate>Thu, 16 Oct 2025 05:35:48 GMT</pubDate>
+      <description><![CDATA[
+# Free Azure]]></description>
+      <content:encoded><![CDATA[
+# Free Azure
 
+Your post content here...
+]]></content:encoded>
+      <author>Your Namess</author>
+    </item>
+    <item>
+      <title>Third post</title>
+      <link>http:&#x2F;&#x2F;localhost:3000&#x2F;third-post.html</link>
+      <guid isPermaLink="true">http:&#x2F;&#x2F;localhost:3000&#x2F;third-post.html</guid>
+      <pubDate>Thu, 16 Oct 2025 05:35:48 GMT</pubDate>
+      <description><![CDATA[
+# Third post]]></description>
+      <content:encoded><![CDATA[
+# Third post
+
+Your post content here...
+]]></content:encoded>
+      <author>Your Namess</author>
+    </item>
   </channel>
 </rss>
