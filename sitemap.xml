@@ -2,19 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>http:&#x2F;&#x2F;localhost:3000/</loc>
-    <lastmod>2025-10-16</lastmod>
+    <lastmod>2025-10-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http:&#x2F;&#x2F;localhost:3000&#x2F;free-azure.html</loc>
-    <lastmod>2025-10-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>http:&#x2F;&#x2F;localhost:3000&#x2F;third-post.html</loc>
-    <lastmod>2025-10-16</lastmod>
+    <loc>http:&#x2F;&#x2F;localhost:3000&#x2F;second-post.html</loc>
+    <lastmod>2025-10-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
