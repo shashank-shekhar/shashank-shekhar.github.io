@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "projectName": "personal-blog",
+  "site": {
+    "title": "Shashank Shekhar",
+    "description": "Work in progress",
+    "author": "Shashank Shekhar",
+    "url": "https://shashankshekhar.net/"
+  },
+  "build": {
+    "output": "_site"
+  },
+  "theme": {
+    "engine": "liquid"
+  },
+  "features": {
+    "comments": "giscus",
+    "rss": true,
+    "i18n": false
+  },
+  "github": {
+    "repo": "shashank-shekhar/shashank-shekhar.github.io"
+  }
+}

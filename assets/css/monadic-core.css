@@ -1,0 +1,13 @@
+/**
+ * Monadic Core Styles
+ *
+ * CSS variables for feature toggles injected by CssBuilder.injectVariables().
+ * Line numbers: Handled by rehype-highlight-code-lines
+ * Copy button: Handled by theme JavaScript
+ * Syntax highlighting: Handled by syntax.css
+ */
+
+:root {
+	--monadic-line-numbers: none;
+	--monadic-copy-button: block;
+}

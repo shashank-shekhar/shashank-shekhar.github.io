@@ -3,26 +3,12 @@
      xmlns:content="http://purl.org/rss/1.0/modules/content/"
      xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title><![CDATA[My Bloggo]]></title>
-    <link>http:&#x2F;&#x2F;localhost:3000</link>
-    <description><![CDATA[A blog powered by Monadics]]></description>
+    <title><![CDATA[Shashank Shekhar]]></title>
+    <link>https://shashankshekhar.net/</link>
+    <description><![CDATA[Work in progress]]></description>
     <language>en</language>
-    <lastBuildDate>Fri, 17 Oct 2025 17:15:56 GMT</lastBuildDate>
-    <atom:link href="http:&#x2F;&#x2F;localhost:3000/rss.xml" rel="self" type="application/rss+xml" />
-    <copyright><![CDATA[All rights reserved 2025, Your Namess]]></copyright>
-    <item>
-      <title><![CDATA[Second post]]></title>
-      <link>http:&#x2F;&#x2F;localhost:3000&#x2F;second-post.html</link>
-      <guid isPermaLink="true">http:&#x2F;&#x2F;localhost:3000&#x2F;second-post.html</guid>
-      <pubDate>Fri, 17 Oct 2025 17:15:56 GMT</pubDate>
-      <description><![CDATA[
-# Second post]]></description>
-      <content:encoded><![CDATA[
-# Second post
-
-Your post content here...
-]]></content:encoded>
-      <author><![CDATA[Your Namess]]></author>
-    </item>
+    <lastBuildDate>Fri, 26 Jun 2026 08:19:11 GMT</lastBuildDate>
+    <atom:link href="https://shashankshekhar.net//rss.xml" rel="self" type="application/rss+xml" />
+    <copyright><![CDATA[All rights reserved 2026, Shashank Shekhar]]></copyright>
   </channel>
 </rss>
