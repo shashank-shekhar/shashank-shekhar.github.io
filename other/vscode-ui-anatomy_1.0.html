@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VS Code UI anatomy — interactive companion · v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBF9F2; --graphite:#2E2C29; --pencil:#6E6A62; --ghost:#C8C4B8;
+  --ink:#2F5FA8; --tape:#EFE3B0; --grid:#E7E3D6;
+  --c-chrome:#2F5FA8; --c-editor:#9A5B1E; --c-panel:#1D7A5F;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--graphite);font-family:"Balsamiq Sans",'Comic Sans MS',cursive;
+  font-size:15px;line-height:1.45;padding:24px 20px 60px;
+}
+.sheet{max-width:1600px;margin:0 auto}
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  border-bottom:2px solid var(--graphite);padding-bottom:12px}
+h1{font-size:30px;font-weight:700;margin:0;letter-spacing:-.5px}
+.sub{color:var(--pencil);margin:2px 0 0;font-size:14px}
+.stamp{border:2px solid var(--graphite);border-radius:4px;padding:6px 12px;background:var(--tape);
+  font-size:12.5px;line-height:1.3;transform:rotate(-1.4deg);text-align:right}
+.stamp b{display:block;font-size:14px}
+
+/* controls */
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 6px}
+.chip{border:1.5px solid var(--graphite);border-radius:14px;background:#fff;padding:4px 14px;font-family:inherit;
+  font-size:13px;cursor:pointer;color:var(--graphite)}
+.chip[aria-pressed="true"]{background:var(--graphite);color:var(--paper)}
+.chip.chrome[aria-pressed="true"]{background:var(--c-chrome);border-color:var(--c-chrome)}
+.chip.editor[aria-pressed="true"]{background:var(--c-editor);border-color:var(--c-editor)}
+.chip.panel[aria-pressed="true"]{background:var(--c-panel);border-color:var(--c-panel)}
+.chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+input[type=search]{border:1.5px solid var(--graphite);border-radius:14px;padding:4px 12px;font-family:inherit;
+  font-size:13px;background:#fff;color:var(--graphite);min-width:190px}
+.count{color:var(--pencil);font-size:12.5px;margin-left:auto}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start;margin-top:8px}
+@media(max-width:1080px){.layout{grid-template-columns:1fr}}
+
+/* wireframe */
+.frame{border:2px solid var(--graphite);border-radius:5px;background:#fff;box-shadow:3px 3px 0 var(--ghost);overflow:hidden}
+.stage{position:relative}
+.box{border:1.5px solid var(--graphite);border-radius:3px;background:#fff;position:relative}
+.dash{border-style:dashed}
+.mark{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 4px;
+  border:1.5px solid var(--ink);border-radius:50%;color:var(--ink);font-size:11.5px;font-weight:700;background:#fff;
+  vertical-align:middle;margin-right:5px;cursor:help;transition:background .12s,color .12s,opacity .12s}
+.mark:focus-visible{outline:2px solid var(--graphite);outline-offset:2px}
+.mark[data-cat=chrome]{border-color:var(--c-chrome);color:var(--c-chrome)}
+.mark[data-cat=editor]{border-color:var(--c-editor);color:var(--c-editor)}
+.mark[data-cat=panel]{border-color:var(--c-panel);color:var(--c-panel)}
+.mark.on,.mark:hover{background:var(--graphite);color:#fff;border-color:var(--graphite)}
+.mark.dim{opacity:.13;pointer-events:none}
+.corner{position:absolute;top:-13px;left:-13px;min-width:18px;height:18px;margin:0}
+.line{height:7px;background:var(--ghost);border-radius:3px;margin:7px 0}
+.line.s{width:45%}.line.m{width:70%}.line.l{width:88%}
+.chrome-bar{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1.5px solid var(--graphite);background:#FAF9F5}
+.pill{border:1.5px solid var(--graphite);border-radius:12px;padding:2px 12px;font-size:12.5px;background:#fff}
+.menu{display:flex;gap:10px;font-size:12.5px;color:var(--pencil);align-items:center}
+.spacer{flex:1}
+.wbtn{width:12px;height:12px;border:1.5px solid var(--graphite);border-radius:2px}
+.body{display:grid;grid-template-columns:62px 208px 1fr 146px;min-height:520px}
+.actbar{border-right:1.5px solid var(--graphite);padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:14px;background:#FAF9F5}
+.icon{width:28px;height:28px;border:1.5px solid var(--graphite);border-radius:3px;position:relative}
+.icon.on{border-width:2.5px}
+.badge{position:absolute;right:-7px;bottom:-7px;width:17px;height:17px;border:1.5px solid var(--ink);color:var(--ink);
+  border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center;background:#fff}
+.sidebar{border-right:1.5px solid var(--graphite);padding:8px;display:flex;flex-direction:column;gap:8px}
+.viewhdr{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;border-bottom:1.5px solid var(--ghost);padding-bottom:4px}
+.acts{display:flex;gap:5px;align-items:center}
+.act{width:14px;height:14px;border:1.5px solid var(--pencil);border-radius:2px}
+.tree{font-size:12.5px;color:var(--pencil);padding-left:2px}
+.tree div{padding:2px 0}
+.tree .ind{padding-left:14px}
+.editorarea{display:flex;flex-direction:column;min-width:0}
+.tabs{display:flex;align-items:center;border-bottom:1.5px solid var(--graphite);background:#FAF9F5}
+.tab{padding:6px 10px;font-size:12.5px;border-right:1.5px solid var(--ghost);color:var(--pencil)}
+.tab.on{background:#fff;color:var(--graphite)}
+.crumbs{padding:4px 10px;font-size:12px;color:var(--pencil);border-bottom:1px dashed var(--ghost)}
+.canvas{flex:1;display:grid;grid-template-columns:46px 1fr 60px 14px;position:relative;min-height:260px}
+.gutter{border-right:1px dashed var(--ghost);font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ghost);
+  padding:8px 6px;text-align:right;line-height:1.9}
+.code{padding:8px 10px;position:relative;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--pencil)}
+.sticky{background:#F4F2EA;border-bottom:1.5px solid var(--ghost);margin:-8px -10px 8px;padding:4px 10px}
+.minimap{border-left:1px dashed var(--ghost);padding:8px 6px;background:#FCFBF7}
+.mm{height:4px;background:var(--ghost);border-radius:2px;margin:3px 0}
+.ruler{border-left:1px dashed var(--ghost);background:#F7F5EE;position:relative}
+.float{position:absolute;background:#fff;border:1.5px solid var(--graphite);border-radius:3px;font-size:11.5px;
+  box-shadow:2px 2px 0 var(--ghost);padding:5px 8px}
+.panel{border-top:1.5px solid var(--graphite);background:#FAF9F5}
+.ptabs{display:flex;gap:12px;align-items:center;padding:5px 10px;font-size:12.5px;color:var(--pencil);border-bottom:1px dashed var(--ghost);flex-wrap:wrap}
+.ptabs .on{color:var(--graphite);border-bottom:2px solid var(--graphite)}
+.pbody{padding:8px 10px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ghost)}
+.secbar{border-left:1.5px solid var(--graphite);padding:8px}
+.status{display:flex;align-items:center;gap:12px;padding:5px 10px;font-size:12px;color:var(--pencil);
+  border-top:1.5px solid var(--graphite);background:#F1EFE7;flex-wrap:wrap}
+.overlay{position:absolute;left:50%;transform:translateX(-50%);top:50px;width:380px;z-index:6;background:#fff;
+  border:2px solid var(--graphite);border-radius:4px;box-shadow:4px 4px 0 var(--ghost);padding:8px}
+.toast{position:absolute;right:14px;bottom:44px;width:220px;z-index:6;background:#fff;border:2px solid var(--graphite);
+  border-radius:4px;box-shadow:3px 3px 0 var(--ghost);padding:8px;font-size:12px}
+
+/* tooltip */
+#tip{position:absolute;z-index:40;max-width:330px;background:#fff;border:2px solid var(--graphite);border-radius:5px;
+  box-shadow:4px 4px 0 var(--ghost);padding:9px 11px;display:none;pointer-events:none}
+#tip.show{display:block}
+#tip .tname{font-size:14.5px;font-weight:700;margin-bottom:2px}
+#tip .tcat{font-size:11px;text-transform:none;color:#fff;border-radius:10px;padding:1px 8px;display:inline-block;margin-bottom:5px}
+#tip .tapi{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink);word-break:break-word;margin-top:5px;
+  border-top:1px dotted var(--ghost);padding-top:5px}
+#tip .tdesc{font-size:13px;color:var(--graphite)}
+
+/* reference list */
+.aside{border:2px solid var(--graphite);border-radius:5px;background:#fff;box-shadow:3px 3px 0 var(--ghost);
+  padding:10px 12px;position:sticky;top:16px;max-height:calc(100vh - 60px);overflow:auto}
+.aside h2{font-size:16px;margin:0 0 8px;font-weight:700;border-bottom:1.5px dashed var(--ghost);padding-bottom:6px}
+.item{border-bottom:1px dotted var(--ghost);padding:7px 4px;cursor:pointer;border-radius:3px}
+.item:last-child{border-bottom:none}
+.item.on,.item:hover{background:#F4F2EA}
+.item .hd{display:flex;gap:7px;align-items:baseline}
+.item .nm{font-size:13.5px;font-weight:700}
+.item .ap{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink);display:block;margin-top:2px;word-break:break-word}
+.item .ds{font-size:12.5px;color:var(--pencil);display:block;margin-top:2px}
+.item.off{display:none}
+.empty{color:var(--pencil);font-size:13px;padding:10px 4px}
+footer{margin-top:22px;border-top:2px solid var(--graphite);padding-top:10px;color:var(--pencil);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="masthead">
+    <div>
+      <h1>VS Code UI anatomy</h1>
+      <p class="sub">Hover or focus any number for its name, description, and API. Filter to one category for a cleaner view.</p>
+    </div>
+    <div class="stamp"><b>companion v1.0</b></div>
+  </div>
+
+  <div class="controls">
+    <button class="chip" data-filter="all" aria-pressed="true">All</button>
+    <button class="chip chrome" data-filter="chrome" aria-pressed="false">Workbench chrome</button>
+    <button class="chip editor" data-filter="editor" aria-pressed="false">Editor surface</button>
+    <button class="chip panel" data-filter="panel" aria-pressed="false">Panel, status bar, overlays</button>
+    <input type="search" id="q" placeholder="Filter by name or API…" aria-label="Filter components">
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="layout">
+    <div class="frame stage" id="stage">
+
+      <div class="overlay">
+        <span class="mark" data-id="36">36</span><span style="font-size:12.5px;color:var(--pencil)">Quick pick</span>
+        <div class="box" style="padding:4px 6px;margin:6px 0;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pencil)">&gt; type a command…</div>
+        <div class="line l"></div><div class="line m"></div><div class="line s"></div>
+      </div>
+
+      <div class="toast">
+        <span class="mark" data-id="37">37</span>Notification<div class="line l"></div><div class="line m"></div>
+      </div>
+
+      <div class="chrome-bar">
+        <span class="mark" data-id="1">1</span>
+        <span class="menu"><span class="mark" data-id="2">2</span>File · Edit · View · Go · Run</span>
+        <span class="spacer"></span>
+        <span class="pill"><span class="mark" data-id="3">3</span>search / go to file</span>
+        <span class="spacer"></span>
+        <span class="mark" data-id="4">4</span><span class="wbtn"></span><span class="wbtn"></span><span class="wbtn"></span>
+        <span class="mark" data-id="5">5</span><span class="wbtn"></span><span class="wbtn"></span><span class="wbtn"></span>
+      </div>
+
+      <div class="body">
+        <div class="actbar">
+          <span class="mark" data-id="6">6</span>
+          <div class="icon on"><span class="mark corner" data-id="7">7</span></div>
+          <div class="icon"><span class="badge">3</span><span class="mark corner" data-id="8">8</span></div>
+          <div class="icon"><span class="mark corner" data-id="44">44</span></div>
+          <div class="icon"></div>
+          <div style="flex:1"></div>
+          <div class="icon"><span class="mark corner" data-id="9">9</span></div>
+        </div>
+
+        <div class="sidebar">
+          <div class="viewhdr"><b><span class="mark" data-id="10">10</span>Primary side bar</b></div>
+          <div class="box" style="padding:6px">
+            <div class="viewhdr"><span><span class="mark" data-id="11">11</span>View container</span></div>
+          </div>
+          <div class="box" style="padding:6px;flex:1">
+            <div class="viewhdr">
+              <span><span class="mark" data-id="12">12</span>View</span>
+              <span class="acts"><span class="mark" data-id="13">13</span><i class="act"></i><i class="act"></i></span>
+            </div>
+            <div class="tree">
+              <div><span class="mark" data-id="14">14</span>▸ tree item</div>
+              <div class="ind">▪ child item</div>
+              <div class="ind">▪ child item</div>
+            </div>
+          </div>
+          <div class="box dash" style="padding:8px">
+            <div style="font-size:12.5px"><span class="mark" data-id="15">15</span>Welcome view</div>
+            <div class="line m"></div>
+          </div>
+        </div>
+
+        <div class="editorarea">
+          <div class="tabs">
+            <span class="tab on"><span class="mark" data-id="17">17</span>extension.ts</span>
+            <span class="tab">package.json</span>
+            <span class="tab dash"><span class="mark" data-id="33">33</span>webview</span>
+            <span class="tab dash"><span class="mark" data-id="40">40</span>walkthrough</span>
+            <span class="spacer"></span>
+            <span class="acts" style="padding-right:8px"><span class="mark" data-id="18">18</span><i class="act"></i><i class="act"></i></span>
+          </div>
+          <div class="crumbs"><span class="mark" data-id="19">19</span>src › extension.ts › activate()</div>
+
+          <div class="canvas">
+            <div class="gutter"><span class="mark" data-id="21">21</span><br>12<br>13<br>14<br>15<br>16<br>17</div>
+            <div class="code">
+              <div class="sticky"><span class="mark" data-id="20">20</span>export function activate(ctx) {</div>
+              <div style="color:var(--ink)"><span class="mark" data-id="22">22</span>1 reference · run command</div>
+              <div>const d = registerCommand(</div>
+              <div>&nbsp;&nbsp;'ext.hello'<span style="color:var(--ghost)">: string</span> <span class="mark" data-id="23">23</span></div>
+              <div>);</div>
+              <div style="margin-top:4px"><span class="mark" data-id="24">24</span>quick fix / refactor</div>
+
+              <div class="float" style="left:96px;top:118px;width:196px">
+                <span class="mark" data-id="25">25</span>Suggest widget<div class="line l"></div><div class="line m"></div>
+              </div>
+              <div class="float" style="left:14px;top:212px;width:180px">
+                <span class="mark" data-id="26">26</span>Hover<div class="line m"></div>
+              </div>
+              <div class="float" style="right:8px;top:6px;width:172px">
+                <span class="mark" data-id="27">27</span>Find widget
+              </div>
+              <div class="float" style="left:150px;top:8px;width:150px;border-radius:14px">
+                <span class="mark" data-id="43">43</span>Debug toolbar
+              </div>
+              <div class="float dash" style="left:30px;bottom:8px;width:236px">
+                <span class="mark" data-id="30">30</span>Peek view
+              </div>
+            </div>
+            <div class="minimap">
+              <span class="mark" data-id="28">28</span>
+              <div class="mm" style="width:80%"></div><div class="mm" style="width:60%"></div>
+              <div class="mm" style="width:90%"></div><div class="mm" style="width:45%"></div>
+              <div class="mm" style="width:70%"></div>
+            </div>
+            <div class="ruler"><span class="mark" data-id="29" style="position:absolute;left:-26px;top:8px;margin:0">29</span></div>
+          </div>
+
+          <div class="panel">
+            <div class="ptabs">
+              <span class="mark" data-id="31">31</span>
+              <span class="on"><span class="mark" data-id="31a">31a</span>Problems</span>
+              <span><span class="mark" data-id="31b">31b</span>Output</span>
+              <span><span class="mark" data-id="31c">31c</span>Debug console</span>
+              <span><span class="mark" data-id="31d">31d</span>Terminal</span>
+              <span class="spacer"></span>
+              <span class="acts"><span class="mark" data-id="32">32</span><i class="act"></i></span>
+            </div>
+            <div class="pbody">$ code --extensionDevelopmentPath=. › extension host started</div>
+          </div>
+        </div>
+
+        <div class="secbar">
+          <div class="viewhdr"><span><span class="mark" data-id="16">16</span>Secondary</span></div>
+          <div class="line l"></div><div class="line m"></div><div class="line s"></div>
+          <div class="box dash" style="padding:6px;margin-top:10px;font-size:12px">
+            <span class="mark" data-id="38">38</span>progress
+          </div>
+          <div class="box dash" style="padding:6px;margin-top:8px;font-size:12px">
+            <span class="mark" data-id="39">39</span>dialog
+          </div>
+        </div>
+      </div>
+
+      <div class="status">
+        <span class="mark" data-id="34">34</span>Status bar
+        <span class="box" style="padding:1px 8px;font-size:11.5px"><span class="mark" data-id="35">35</span>&gt;&lt; remote</span>
+        <span>⎇ main</span><span>⚠ 0 ✖ 2</span>
+        <span class="spacer"></span>
+        <span><span class="mark" data-id="41">41</span>settings</span>
+        <span><span class="mark" data-id="42">42</span>keybindings</span>
+        <span>Ln 14, Col 22</span><span>TypeScript</span>
+      </div>
+
+      <div id="tip" role="tooltip" aria-live="polite"></div>
+    </div>
+
+    <div class="aside">
+      <h2>Reference</h2>
+      <div id="list"></div>
+      <div class="empty" id="empty" style="display:none">Nothing matches that filter.</div>
+    </div>
+  </div>
+
+  <footer>Companion v1.0 · data verified against code.visualstudio.com contribution-points and when-clause-contexts, docs revision 5 Aug 2026. ° marks identifiers that are real and in use but absent from the published reference.</footer>
+</div>
+
+<script>
+const CATS = {chrome:{label:'Workbench chrome',color:'#2F5FA8'},editor:{label:'Editor surface',color:'#9A5B1E'},panel:{label:'Panel, status bar, overlays',color:'#1D7A5F'}};
+const DATA = [
+ {id:'1',cat:'chrome',name:'Title bar',desc:'The window strip holding the menu bar, command center, and layout controls.',api:'setting: window.titleBarStyle'},
+ {id:'2',cat:'chrome',name:'Menu bar',desc:'Not an extensible menu location. The only way in is the File › New File entry.',api:'menus["file/newFile"]'},
+ {id:'3',cat:'chrome',name:'Command center',desc:'Search and go-to-file box in the title bar. Not extensible.',api:'setting: window.commandCenter'},
+ {id:'4',cat:'chrome',name:'Layout controls',desc:'Toggles for the side bars and panel. Invoke the same commands from your extension.',api:'workbench.action.toggleSidebarVisibility · togglePanel · toggleAuxiliaryBar'},
+ {id:'5',cat:'chrome',name:'Window controls',desc:'Host chrome — minimise, maximise, close. Not extensible.',api:'—'},
+ {id:'6',cat:'chrome',name:'Activity bar',desc:'The icon rail. Each icon is one view container; contributing one is how you get your own rail slot.',api:'contributes.viewsContainers.activitybar'},
+ {id:'7',cat:'chrome',name:'View container icon',desc:'Your container icon. 24×24, single colour, SVG preferred; VS Code applies 60% opacity when inactive.',api:'viewsContainers[].icon'},
+ {id:'8',cat:'chrome',name:'Badge',desc:'Numeric overlay on the container icon, set from the view rather than the container.',api:'TreeView.badge · WebviewView.badge (ViewBadge)'},
+ {id:'9',cat:'chrome',name:'Accounts / manage',desc:'Extensions reach the accounts menu by registering an authentication provider, not by adding a menu item.',api:'contributes.authentication + authentication.registerAuthenticationProvider'},
+ {id:'10',cat:'chrome',name:'Primary side bar',desc:'The default-left side bar. It hosts whichever view container is active.',api:'contributes.views.<containerId>'},
+ {id:'11',cat:'chrome',name:'View container',desc:'A named group of views. You can only contribute containers to activitybar and panel.',api:'contributes.viewsContainers'},
+ {id:'12',cat:'chrome',name:'View',desc:'One collapsible section inside a container. Fill it with a tree or a webview.',api:'createTreeView / registerTreeDataProvider · registerWebviewViewProvider'},
+ {id:'13',cat:'chrome',name:'View title actions',desc:'Toolbar on the view header. Group navigation renders as icons; anything else falls into the … overflow.',api:'menus["view/title"] · when: view == <viewId>'},
+ {id:'14',cat:'chrome',name:'Tree item + inline actions',desc:'contextValue on the item is the only per-item context key you get — it becomes viewItem.',api:'TreeItem.contextValue · menus["view/item/context"]'},
+ {id:'15',cat:'chrome',name:'Welcome view',desc:'Placeholder content for an empty tree. Command links on their own line render as buttons.',api:'contributes.viewsWelcome'},
+ {id:'16',cat:'chrome',name:'Secondary side bar',desc:'No contribution slot exists for it — the user drags a container here. Test visibility with activeAuxiliary.',api:'when: activeAuxiliary == <containerId>'},
+ {id:'17',cat:'editor',name:'Editor tab / editor group',desc:'Tabs belong to a group; groups are addressed by ViewColumn and inspected through the tab API.',api:'window.tabGroups · ViewColumn'},
+ {id:'18',cat:'editor',name:'Editor title actions',desc:'Icons at the right of the tab bar. navigation and 1_run show inline; other groups go under the … menu.',api:'menus["editor/title"] · menus["editor/title/run"]'},
+ {id:'19',cat:'editor',name:'Breadcrumbs',desc:'Symbol path above the editor, populated from your document symbol provider.',api:'languages.registerDocumentSymbolProvider'},
+ {id:'20',cat:'editor',name:'Sticky scroll',desc:'Pinned enclosing scopes at the top of the editor. No API — derived from the outline and folding models.',api:'setting: editor.stickyScroll.enabled'},
+ {id:'21',cat:'editor',name:'Gutter',desc:'Line numbers, folding controls, and decoration icons. Right-clicking it hits editor/lineNumber/context.',api:'createTextEditorDecorationType({gutterIconPath}) · registerFoldingRangeProvider'},
+ {id:'22',cat:'editor',name:'CodeLens',desc:'Actionable text rendered above a line.',api:'languages.registerCodeLensProvider'},
+ {id:'23',cat:'editor',name:'Inlay hints / ghost text',desc:'Inline type or parameter annotations, and greyed inline completions.',api:'registerInlayHintsProvider · registerInlineCompletionItemProvider'},
+ {id:'24',cat:'editor',name:'Lightbulb (code actions)',desc:'Quick fixes and refactorings surfaced at the cursor.',api:'registerCodeActionsProvider · key: codeActionMenuVisible'},
+ {id:'25',cat:'editor',name:'Suggest widget',desc:'The IntelliSense list.',api:'registerCompletionItemProvider · key: suggestWidgetVisible'},
+ {id:'26',cat:'editor',name:'Hover',desc:'Tooltip shown over a symbol. Multiple providers merge into one hover.',api:'registerHoverProvider'},
+ {id:'27',cat:'editor',name:'Find widget',desc:'In-editor find and replace.',api:'command actions.find · key: findWidgetVisible'},
+ {id:'28',cat:'editor',name:'Minimap',desc:'Decorations appear here only if you set the minimap options — separate from the overview ruler.',api:'DecorationRenderOptions.minimap = {color, position}'},
+ {id:'29',cat:'editor',name:'Overview ruler',desc:'The thin strip at the far right. Lane controls which third of the strip your mark occupies.',api:'DecorationRenderOptions.overviewRulerColor + overviewRulerLane'},
+ {id:'30',cat:'editor',name:'Peek view',desc:'Inline embedded editor for definitions and references.',api:'registerDefinitionProvider / ReferenceProvider · key: referenceSearchVisible'},
+ {id:'31',cat:'panel',name:'Panel',desc:'The bottom dock. Contributing a container here puts your view alongside Problems and Terminal.',api:'contributes.viewsContainers.panel'},
+ {id:'31a',cat:'panel',name:'Problems',desc:'Rendered from diagnostics. Own your collection so you can clear it on dispose.',api:'languages.createDiagnosticCollection'},
+ {id:'31b',cat:'panel',name:'Output',desc:'Append-only log channel for your extension.',api:'window.createOutputChannel'},
+ {id:'31c',cat:'panel',name:'Debug console',desc:'REPL for the active debug session.',api:'debug.activeDebugConsole · key: inDebugRepl'},
+ {id:'31d',cat:'panel',name:'Terminal',desc:'Create terminals directly, or contribute a profile the user can pick from the dropdown.',api:'window.createTerminal · contributes.terminal.profiles + registerTerminalProfileProvider'},
+ {id:'32',cat:'panel',name:'Panel title actions',desc:'Same contribution point as a side bar view toolbar — panel views are just views.',api:'menus["view/title"] with when: view == <panel view id>'},
+ {id:'34',cat:'panel',name:'Status bar',desc:'The bottom strip. Items are left- or right-aligned; priority orders them within an alignment.',api:'—'},
+ {id:'35',cat:'panel',name:'Status bar item',desc:'Give it a stable id so the user can hide it. Remote indicator items sit at the far left.',api:'window.createStatusBarItem(id, alignment, priority)'},
+ {id:'36',cat:'panel',name:'Quick pick / command palette',desc:'createQuickPick when you need live filtering or multi-step input; showQuickPick for a one-shot list.',api:'createQuickPick · showQuickPick · menus["commandPalette"] · key: inQuickOpen'},
+ {id:'37',cat:'panel',name:'Notification toast',desc:'Transient message, bottom right. Buttons are the extra string arguments.',api:'showInformationMessage / Warning / Error · key: notificationToastsVisible'},
+ {id:'38',cat:'panel',name:'Progress indicator',desc:'Location decides where it renders: a toast, the status bar, or the SCM view title.',api:'withProgress({location: ProgressLocation.Notification | Window | SourceControl})'},
+ {id:'39',cat:'panel',name:'Modal dialog',desc:'Same message API with modal set — blocks until answered, so use it sparingly.',api:'showInformationMessage(msg, {modal: true})'},
+ {id:'40',cat:'panel',name:'Walkthrough',desc:'Getting-started page content. Steps check themselves off via completionEvents.',api:'contributes.walkthroughs'},
+ {id:'41',cat:'panel',name:'Settings editor',desc:'Rendered from your configuration schema; scope decides where a setting can be set.',api:'contributes.configuration'},
+ {id:'42',cat:'panel',name:'Keyboard shortcuts editor',desc:'Your keybindings appear here with their when clauses.',api:'contributes.keybindings'},
+ {id:'43',cat:'panel',name:'Debug toolbar',desc:'Floating run controls during a session.',api:'contributes.debuggers · menus["debug/toolBar"] · key: debugState'},
+ {id:'44',cat:'panel',name:'Source control view',desc:'Resource groups and states each have their own context menu location.',api:'scm.createSourceControl · menus["scm/title"] · key: scmProvider'}
+];
+const byId = Object.fromEntries(DATA.map(d=>[d.id,d]));
+const stage=document.getElementById('stage'), tip=document.getElementById('tip'),
+      list=document.getElementById('list'), empty=document.getElementById('empty'),
+      countEl=document.getElementById('count'), q=document.getElementById('q');
+let filter='all', query='';
+
+document.querySelectorAll('.mark[data-id]').forEach(m=>{
+  const d=byId[m.dataset.id];
+  if(!d) return;
+  m.dataset.cat=d.cat;
+  m.tabIndex=0;
+  m.setAttribute('role','button');
+  m.setAttribute('aria-label',d.name+' — '+d.desc);
+});
+
+list.innerHTML = DATA.map(d=>
+  '<div class="item" data-id="'+d.id+'" data-cat="'+d.cat+'">'+
+   '<div class="hd"><span class="mark" style="pointer-events:none;border-color:'+CATS[d.cat].color+';color:'+CATS[d.cat].color+'">'+d.id+'</span>'+
+   '<span class="nm">'+d.name+'</span></div>'+
+   '<span class="ds">'+d.desc+'</span><span class="ap">'+d.api+'</span></div>').join('');
+
+function showTip(el){
+  const d=byId[el.dataset.id]; if(!d) return;
+  tip.innerHTML='<div class="tcat" style="background:'+CATS[d.cat].color+'">'+CATS[d.cat].label+'</div>'+
+    '<div class="tname">'+d.id+' · '+d.name+'</div><div class="tdesc">'+d.desc+'</div><div class="tapi">'+d.api+'</div>';
+  tip.classList.add('show');
+  const s=stage.getBoundingClientRect(), r=el.getBoundingClientRect();
+  let x=r.left-s.left+r.width/2-tip.offsetWidth/2;
+  let y=r.top-s.top-tip.offsetHeight-10;
+  if(y<4) y=r.bottom-s.top+10;
+  x=Math.max(6,Math.min(x,s.width-tip.offsetWidth-6));
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+  el.classList.add('on');
+  const row=list.querySelector('.item[data-id="'+d.id+'"]');
+  if(row){row.classList.add('on'); row.scrollIntoView({block:'nearest'});}
+}
+function hideTip(){
+  tip.classList.remove('show');
+  document.querySelectorAll('.mark.on,.item.on').forEach(e=>e.classList.remove('on'));
+}
+stage.addEventListener('mouseover',e=>{const m=e.target.closest('.mark[data-id]'); if(m) showTip(m);});
+stage.addEventListener('mouseout',e=>{if(e.target.closest('.mark[data-id]')) hideTip();});
+stage.addEventListener('focusin',e=>{const m=e.target.closest('.mark[data-id]'); if(m) showTip(m);});
+stage.addEventListener('focusout',hideTip);
+document.addEventListener('keydown',e=>{if(e.key==='Escape') hideTip();});
+
+list.addEventListener('mouseover',e=>{
+  const it=e.target.closest('.item'); if(!it) return;
+  const m=stage.querySelector('.mark[data-id="'+it.dataset.id+'"]');
+  if(m) m.classList.add('on');
+});
+list.addEventListener('mouseout',()=>document.querySelectorAll('.mark.on').forEach(e=>e.classList.remove('on')));
+list.addEventListener('click',e=>{
+  const it=e.target.closest('.item'); if(!it) return;
+  const m=stage.querySelector('.mark[data-id="'+it.dataset.id+'"]');
+  if(m){m.scrollIntoView({block:'center',behavior:'smooth'}); showTip(m); setTimeout(hideTip,2600);}
+});
+
+function matches(d){
+  if(filter!=='all' && d.cat!==filter) return false;
+  if(!query) return true;
+  const s=(d.id+' '+d.name+' '+d.api+' '+d.desc).toLowerCase();
+  return s.includes(query);
+}
+function apply(){
+  let n=0;
+  DATA.forEach(d=>{
+    const ok=matches(d);
+    if(ok) n++;
+    const row=list.querySelector('.item[data-id="'+d.id+'"]');
+    if(row) row.classList.toggle('off',!ok);
+    const m=stage.querySelector('.mark[data-id="'+d.id+'"]');
+    if(m) m.classList.toggle('dim',!ok);
+  });
+  empty.style.display=n?'none':'block';
+  countEl.textContent=n+' of '+DATA.length+' shown';
+  hideTip();
+}
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+  filter=c.dataset.filter;
+  document.querySelectorAll('.chip').forEach(o=>o.setAttribute('aria-pressed',String(o===c)));
+  apply();
+}));
+q.addEventListener('input',()=>{query=q.value.trim().toLowerCase(); apply();});
+apply();
+</script>
+</body>
+</html>

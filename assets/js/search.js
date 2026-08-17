@@ -23,6 +23,7 @@
 	let fuse = null;
 	let searchIndex = [];
 	let selectedIndex = -1;
+	let lastFocused = null; // element to restore focus to when the modal closes
 
 	// DOM elements
 	const searchTrigger = document.getElementById('search-trigger');
@@ -78,6 +79,7 @@
 		searchModalBackdrop.addEventListener('click', closeSearch);
 		searchInput.addEventListener('input', handleSearch);
 		searchInput.addEventListener('keydown', handleKeyDown);
+		searchModal.addEventListener('keydown', trapFocus);
 
 		// Keyboard shortcut: Press "/" to open search
 		document.addEventListener('keydown', (e) => {
@@ -92,6 +94,7 @@
 	 * Open search modal
 	 */
 	function openSearch() {
+		lastFocused = document.activeElement; // remember where focus came from
 		searchModal.setAttribute('aria-hidden', 'false');
 		searchModal.classList.add('active');
 		document.body.style.overflow = 'hidden'; // Prevent background scroll
@@ -109,6 +112,38 @@
 		searchInput.value = '';
 		searchResults.innerHTML = '';
 		selectedIndex = -1;
+		// Return focus to whatever opened the modal (the trigger), so keyboard
+		// users aren't dropped at the top of the page.
+		if (lastFocused && typeof lastFocused.focus === 'function') {
+			lastFocused.focus();
+		}
+		lastFocused = null;
+	}
+
+	/**
+	 * Keep Tab focus inside the open modal (focus trap). Without this, Tab walks
+	 * into the page behind the dialog.
+	 */
+	function trapFocus(e) {
+		if (e.key !== 'Tab' || !searchModal.classList.contains('active')) {
+			return;
+		}
+		const focusable = searchModal.querySelectorAll(
+			'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+		);
+		const visible = Array.prototype.filter.call(focusable, (el) => el.offsetParent !== null || el === searchInput);
+		if (visible.length === 0) {
+			return;
+		}
+		const first = visible[0];
+		const last = visible[visible.length - 1];
+		if (e.shiftKey && document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		}
 	}
 
 	/**
@@ -156,17 +191,16 @@
 		searchResults.innerHTML = '';
 
 		if (results.length === 0) {
+			// The "No posts found for X" fact is announced by the aria-live status
+			// bar (see handleSearch); the card only carries the suggestion, so the
+			// message isn't printed twice.
 			const noResults = document.createElement('div');
 			noResults.className = 'search-no-results';
-
-			const p1 = document.createElement('p');
-			p1.textContent = `No posts found for "${query}"`;
 
 			const p2 = document.createElement('p');
 			p2.className = 'search-suggestion';
 			p2.textContent = 'Try different keywords or check your spelling';
 
-			noResults.appendChild(p1);
 			noResults.appendChild(p2);
 			searchResults.appendChild(noResults);
 			return;
@@ -312,6 +346,14 @@
 	 * Handle keyboard navigation
 	 */
 	function handleKeyDown(e) {
+		// Escape must always close, even with no results showing (it used to be
+		// short-circuited by the empty-results guard below).
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			closeSearch();
+			return;
+		}
+
 		const results = searchResults.querySelectorAll('.search-result-item');
 
 		if (results.length === 0) return;
@@ -334,11 +376,6 @@
 				if (selectedIndex >= 0) {
 					results[selectedIndex].click();
 				}
-				break;
-
-			case 'Escape':
-				e.preventDefault();
-				closeSearch();
 				break;
 		}
 	}

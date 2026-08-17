@@ -2,19 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https:&#x2F;&#x2F;shashankshekhar.net&#x2F;/</loc>
-    <lastmod>2026-06-26</lastmod>
+    <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https:&#x2F;&#x2F;shashankshekhar.net&#x2F;&#x2F;tags&#x2F;</loc>
-    <lastmod>2026-06-26</lastmod>
+    <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https:&#x2F;&#x2F;shashankshekhar.net&#x2F;&#x2F;categories&#x2F;</loc>
-    <lastmod>2026-06-26</lastmod>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https:&#x2F;&#x2F;shashankshekhar.net&#x2F;&#x2F;about&#x2F;</loc>
+    <lastmod>2026-08-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

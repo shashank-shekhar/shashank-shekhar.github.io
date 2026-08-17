@@ -13,10 +13,13 @@
    CSS Variables — Light Mode (default)
    ========================================================================== */
 :root {
-	/* --- Colors --- */
-	--color-primary: #059669;
-	--color-primary-hover: #047857;
-	--color-accent: #059669;
+	/* --- Colors ---
+	   Primary/accent are used as foreground text (links, tags, "read more"),
+	   so they must clear WCAG AA 4.5:1. #047857 gives ~5.0–5.5:1 on the page,
+	   surface, and card backgrounds; the old #059669 was 3.4–3.8:1 (fail). */
+	--color-primary: #047857;
+	--color-primary-hover: #065f46;
+	--color-accent: #047857;
 	--color-link: #047857;
 	--color-accent-dim: rgba(5, 150, 105, 0.08);
 	--color-accent-muted: rgba(5, 150, 105, 0.2);
@@ -26,7 +29,8 @@
 	--color-surface-raised: #ffffff;
 	--color-text: #0f172a;
 	--color-text-secondary: #475569;
-	--color-text-muted: #64748b;
+	/* Darkened from #64748b (4.34:1 on the surface) to clear AA on cards/asides. */
+	--color-text-muted: #5b6b7f;
 	--color-border: #e2e8f0;
 	--color-border-light: #f1f5f9;
 
@@ -34,7 +38,8 @@
 	--color-code-bg: #18181b;
 	--color-code-text: #e4e4e7;
 	--color-code-border: #27272a;
-	--color-code-line-number: #52525b;
+	/* #71717a clears 3:1 on the #18181b gutter (was #52525b ~2.3:1). */
+	--color-code-line-number: #71717a;
 
 	/* Inline code */
 	--color-inline-code-bg: rgba(5, 150, 105, 0.08);
@@ -77,9 +82,15 @@
 	--space-12: 3rem;
 	--space-16: 4rem;
 
-	/* --- Layout --- */
+	/* --- Layout ---
+	   The masthead/nav/footer fill the roomy container; the reading content is
+	   capped at --content-width and CENTERED within it (see the margin: auto on
+	   .post-content, .post-header, .archive-page, the cards and .post-footer).
+	   Centering — rather than left-aligning — keeps the body balanced in the
+	   viewport on wide screens instead of drifting to the left edge. */
 	--container-width: 800px;
-	--content-width: 680px;
+	/* ~66–70ch measure for comfortable long-form reading. */
+	--content-width: 640px;
 
 	/* --- Borders --- */
 	--border-radius-sm: 4px;
@@ -136,18 +147,22 @@
 
 	--color-background: #0f172a;
 	--color-surface: #1e293b;
-	--color-surface-raised: #1e293b;
+	/* Distinct values so elevation and hairline separators are visible in dark
+	   mode (previously surface / surface-raised / border-light all collapsed to
+	   #1e293b, flattening cards and dividers into the page). */
+	--color-surface-raised: #243349;
 	--color-text: #f8fafb;
 	--color-text-secondary: #94a3b8;
 	--color-text-muted: #8496ae;
 	--color-border: #334155;
-	--color-border-light: #1e293b;
+	--color-border-light: #2a3a52;
 
-	/* Code blocks — slightly lighter than page bg */
-	--color-code-bg: #1e293b;
+	/* Code blocks — recessed panel, darker than the page for terminal definition */
+	--color-code-bg: #0b1120;
 	--color-code-text: #d4d4d8;
 	--color-code-border: #334155;
-	--color-code-line-number: #475569;
+	/* #64748b clears 3:1 on the #0b1120 gutter (was #475569 ~2.4:1). */
+	--color-code-line-number: #64748b;
 
 	/* Inline code */
 	--color-inline-code-bg: rgba(52, 211, 153, 0.08);
@@ -372,8 +387,16 @@ h2:hover .heading-anchor,
 h3:hover .heading-anchor,
 h4:hover .heading-anchor,
 h5:hover .heading-anchor,
-h6:hover .heading-anchor {
+h6:hover .heading-anchor,
+.heading-anchor:focus-visible {
 	opacity: 1;
+}
+
+/* Touch devices have no hover — show the anchors so they're reachable. */
+@media (hover: none) {
+	.heading-anchor {
+		opacity: 1;
+	}
 }
 
 .heading-anchor:hover {
@@ -538,7 +561,6 @@ tbody tr:hover {
 	line-height: var(--line-height-tight);
 	letter-spacing: 0.09em;
 	margin: 0;
-	opacity: 0.75;
 }
 
 .site-title a {
@@ -581,6 +603,12 @@ tbody tr:hover {
 		padding: var(--space-4) 0 0;
 	}
 
+	/* 2.075rem wrapped the wordmark to three lines at 390px. */
+	.site-title {
+		font-size: 1.5rem;
+		letter-spacing: 0.04em;
+	}
+
 	.site-description {
 		font-size: var(--font-size-xs);
 	}
@@ -597,8 +625,8 @@ tbody tr:hover {
 	position: absolute;
 	top: 0;
 	right: 0;
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	padding: var(--space-2);
 	background: transparent;
 	border: 1px solid var(--color-border);
@@ -677,6 +705,23 @@ tbody tr:hover {
 	text-decoration: none;
 }
 
+/* "You are here" — the section the current page belongs to. */
+.navbar-link.active,
+.navbar-link[aria-current='page'] {
+	color: var(--color-text);
+	border-bottom-color: var(--color-primary);
+}
+
+/* Nav menu items are title-cased by the theme, regardless of the casing
+   authored in page/folder titles — menu-item capitalization is a presentation
+   concern, not a content concern. Display-only: the underlying title (and DOM
+   text for screen readers) is unchanged. */
+.navbar-link,
+.dropdown-toggle,
+.dropdown-item {
+	text-transform: capitalize;
+}
+
 /* Dropdown menu styles */
 .navbar-dropdown {
 	position: relative;
@@ -719,8 +764,17 @@ tbody tr:hover {
 	z-index: 1000;
 }
 
-.navbar-dropdown:hover .dropdown-menu {
+/* JS-controlled open state works everywhere (tap/click/keyboard). */
+.navbar-dropdown.is-open .dropdown-menu {
 	display: block;
+}
+
+/* Hover-to-open only where hover is real — otherwise a tap leaves the toggle in
+   a sticky :hover state on touch devices and the menu can't be closed. */
+@media (hover: hover) {
+	.navbar-dropdown:hover .dropdown-menu {
+		display: block;
+	}
 }
 
 .dropdown-item {
@@ -823,8 +877,9 @@ tbody tr:hover {
 		z-index: 1000;
 	}
 
-	.navbar-dropdown:hover .dropdown-menu,
-	.navbar-dropdown:focus-within .dropdown-menu {
+	/* On this narrow layout (typically touch), open via the JS .is-open class
+	   only — :hover/:focus-within stick after a tap and trap the menu open. */
+	.navbar-dropdown.is-open .dropdown-menu {
 		display: block;
 	}
 
@@ -877,11 +932,16 @@ tbody tr:hover {
    Index Page — Homepage post list with bold number markers
    ========================================================================== */
 
-/* Hide the duplicate h2 + description since the header already shows them */
-.index-page > h2 {
+/* On the HOMEPAGE only, the masthead already shows the site title + tagline,
+   so hide this duplicate h2. Sub-listings (folders, categories, archives) use
+   the same .index-page wrapper but WITHOUT --home, so their heading stays
+   visible — it's the only label saying what the reader is looking at. */
+.index-page--home > h2 {
 	display: none;
 }
 
+/* The "Posts in X" / "Posts from Y" line is filler next to the heading, so it
+   stays hidden on every listing (home included). */
 .index-page > .site-description {
 	display: none;
 }
@@ -966,6 +1026,10 @@ tbody tr:hover {
 }
 
 .post-preview time {
+	/* Own line under the headline — inline it butted against the title and
+	   wrapped mid-date on narrow screens. */
+	display: block;
+	margin-top: var(--space-1);
 	font-size: var(--font-size-xs);
 	color: var(--color-text-muted);
 	letter-spacing: var(--letter-spacing-wide);
@@ -982,14 +1046,17 @@ tbody tr:hover {
    Post Page — Header & Meta
    ========================================================================== */
 .post-header {
-	margin-bottom: var(--space-8);
+	max-width: var(--content-width);
+	margin: 0 auto var(--space-8);
 	padding-bottom: var(--space-6);
 	border-bottom: none;
 	position: relative;
 }
 
-/* Gradient fade line after post header */
-.post-header::after {
+/* Gradient fade line after the post header — only when the header carries a
+   meta row (date/author/tags). On meta-less headers (About/Resume) this would
+   otherwise stack a second rule right under the .post-title accent bar. */
+.post-header:has(.post-meta)::after {
 	content: '';
 	position: absolute;
 	bottom: 0;
@@ -1018,6 +1085,17 @@ tbody tr:hover {
 	height: 4px;
 	background: var(--color-primary);
 	border-radius: 2px;
+}
+
+/* Titles render in their authored casing. The previous default applied
+   `text-transform: capitalize`, which uppercases the first letter of EVERY
+   word — it can't lowercase articles/prepositions, so "Welcome to the Blog"
+   became "Welcome To The Blog" and clashed with the author's own body heading.
+   Titles are authored in proper mixed-case, so we respect that instead. The
+   .title-capitalize class is kept (layouts still emit it) but is now a no-op,
+   explicitly clearing any inherited transform. */
+.title-capitalize {
+	text-transform: none;
 }
 
 .post-meta {
@@ -1054,6 +1132,8 @@ tbody tr:hover {
    ========================================================================== */
 .post-content {
 	max-width: var(--content-width);
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .post-content > *:first-child {
@@ -1064,7 +1144,8 @@ tbody tr:hover {
    Post Footer — Tags & Categories
    ========================================================================== */
 .post-footer {
-	margin-top: var(--space-12);
+	max-width: var(--content-width);
+	margin: var(--space-12) auto 0;
 	padding-top: var(--space-6);
 	border-top: none;
 	position: relative;
@@ -1213,8 +1294,19 @@ code {
 	color: rgba(255, 255, 255, 0.8);
 }
 
-pre:hover .monadic-copy-button {
+/* Reveal on hover, on keyboard focus, and when the button itself is focused so
+   it isn't mouse-only (invisible to touch + keyboard users). */
+pre:hover .monadic-copy-button,
+pre:focus-within .monadic-copy-button,
+.monadic-copy-button:focus-visible {
 	opacity: 1;
+}
+
+/* Touch devices have no hover — keep the button permanently visible there. */
+@media (hover: none) {
+	.monadic-copy-button {
+		opacity: 1;
+	}
 }
 
 /* ==========================================================================
@@ -1302,10 +1394,11 @@ pre:hover .monadic-copy-button {
    Author Bio
    ========================================================================== */
 .post-author-bio {
+	max-width: var(--content-width);
 	display: flex;
 	align-items: center;
 	gap: var(--space-4);
-	margin-top: var(--space-8);
+	margin: var(--space-8) auto 0;
 	padding: var(--space-5);
 	background: var(--color-surface);
 	border: 1px solid var(--color-border);
@@ -1354,8 +1447,8 @@ pre:hover .monadic-copy-button {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 2.25rem;
-	height: 2.25rem;
+	min-width: 2.75rem;
+	height: 2.75rem;
 	padding: 0 var(--space-3);
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-sm);
@@ -1397,8 +1490,9 @@ pre:hover .monadic-copy-button {
 	}
 
 	.pagination-link {
-		min-width: 2rem;
-		height: 2rem;
+		/* Keep the ≥44px tap target on mobile; only trim horizontal padding. */
+		min-width: 2.75rem;
+		height: 2.75rem;
 		padding: 0 var(--space-2);
 		font-size: var(--font-size-xs);
 	}
@@ -1408,7 +1502,8 @@ pre:hover .monadic-copy-button {
    Table of Contents
    ========================================================================== */
 .toc {
-	margin-bottom: var(--space-8);
+	max-width: var(--content-width);
+	margin: 0 auto var(--space-8);
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-md);
 	background: var(--color-surface);
@@ -1497,7 +1592,8 @@ details[open] > .toc-title::before {
    Series Styles
    ========================================================================== */
 .post-series {
-	margin: var(--space-8) 0;
+	max-width: var(--content-width);
+	margin: var(--space-8) auto;
 	padding: var(--space-5);
 	background: var(--color-surface);
 	border: 1px solid var(--color-border);
@@ -1587,7 +1683,11 @@ details[open] > .toc-title::before {
 .series-badge {
 	padding: 0.125rem var(--space-2);
 	background: var(--color-primary);
-	color: #ffffff;
+	/* var(--color-background), not #fff: in dark mode --color-primary is mint
+	   (#6ee7b7) and white text failed AA (~1.3:1). The page background adapts
+	   per mode (near-white on emerald in light, near-black on mint in dark),
+	   matching how .pagination-current already handles the accent fill. */
+	color: var(--color-background);
 	border-radius: var(--border-radius-sm);
 	font-weight: 600;
 }
@@ -1655,7 +1755,8 @@ details[open] > .toc-title::before {
    Related Posts
    ========================================================================== */
 .post-related {
-	margin: var(--space-8) 0;
+	max-width: var(--content-width);
+	margin: var(--space-8) auto;
 	padding: var(--space-5);
 	background: var(--color-surface);
 	border: 1px solid var(--color-border);
@@ -1716,8 +1817,8 @@ details[open] > .toc-title::before {
 
 /* Search trigger button */
 .search-trigger {
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	padding: var(--space-2);
 	background: transparent;
 	border: 1px solid var(--color-border);
@@ -1958,15 +2059,124 @@ details[open] > .toc-title::before {
 }
 
 /* ==========================================================================
+   Collection Index — projects & other custom collections
+   Without these rules the generated .collection-* markup falls back to raw
+   browser defaults (disc bullets, oversized accent link-titles).
+   ========================================================================== */
+.collection-index > .collection-title {
+	margin-top: 0;
+	margin-bottom: var(--space-6);
+	position: relative;
+	padding-bottom: var(--space-4);
+}
+
+.collection-index > .collection-title::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 3rem;
+	height: 4px;
+	background: var(--color-primary);
+	border-radius: 2px;
+}
+
+.collection-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-4);
+}
+
+.collection-item-entry {
+	padding: var(--space-5) var(--space-6);
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-md);
+	transition:
+		border-color var(--transition-fast),
+		box-shadow var(--transition-fast);
+}
+
+.collection-item-entry:hover {
+	border-color: var(--color-primary);
+	box-shadow: var(--shadow-md);
+}
+
+.collection-item-entry h2 {
+	margin: 0;
+	font-size: var(--font-size-xl);
+	font-weight: 700;
+	line-height: var(--line-height-snug);
+	letter-spacing: var(--letter-spacing-tight);
+}
+
+.collection-item-entry h2 a {
+	color: var(--color-text);
+	text-decoration: none;
+	transition: color var(--transition-fast);
+}
+
+.collection-item-entry h2 a:hover {
+	color: var(--color-primary);
+	text-decoration: none;
+}
+
+.collection-item-entry time {
+	display: block;
+	margin-top: var(--space-2);
+	font-family: var(--font-mono);
+	font-size: var(--font-size-xs);
+	color: var(--color-text-muted);
+	letter-spacing: var(--letter-spacing-wide);
+}
+
+.collection-item-entry .collection-item-description {
+	margin-top: var(--space-2);
+	margin-bottom: 0;
+}
+
+/* ==========================================================================
    Archive Pages
    ========================================================================== */
 .archive-page {
 	max-width: var(--content-width);
+	margin-left: auto;
+	margin-right: auto;
 }
 
-.archive-page h1 {
+/* Listing/taxonomy titles ("Categories", "Tags", "Blog", "Category: …",
+   "Archive: 2024") are emitted as a bare <h2>, which inherited the global
+   heading margin-top and stacked on the .site-content top padding (~80px dead
+   gap) while rendering smaller and bar-less than .post-title. Give them the
+   same masthead treatment. (.index-page--home > h2 is display:none above, so
+   the homepage is unaffected.) */
+.archive-page > h1,
+.archive-page > h2,
+.index-page > h2 {
 	margin-top: 0;
 	margin-bottom: var(--space-6);
+	font-size: 3rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: var(--line-height-tight);
+	position: relative;
+	padding-bottom: var(--space-4);
+}
+
+.archive-page > h1::after,
+.archive-page > h2::after,
+.index-page > h2::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 3rem;
+	height: 4px;
+	background: var(--color-primary);
+	border-radius: 2px;
 }
 
 .archive-list {
@@ -2170,6 +2380,12 @@ details[open] > .toc-title::before {
 	h2 {
 		font-size: var(--font-size-xl);
 	}
+	/* Match the mobile h1 size — the desktop rule pins these to 3rem. */
+	.archive-page > h1,
+	.archive-page > h2,
+	.index-page > h2 {
+		font-size: 1.75rem;
+	}
 	h3 {
 		font-size: var(--font-size-lg);
 	}
@@ -2183,9 +2399,11 @@ details[open] > .toc-title::before {
 		border-radius: var(--border-radius-md);
 	}
 
+	/* Keep a ≥44px touch target on mobile (don't shrink below the tap minimum);
+	   the icon itself stays small. */
 	.theme-toggle {
-		width: 32px;
-		height: 32px;
+		width: 44px;
+		height: 44px;
 	}
 
 	.theme-toggle svg {
@@ -2310,4 +2528,36 @@ details[open] > .toc-title::before {
 .search-close:focus-visible {
 	outline: 2px solid var(--color-primary);
 	outline-offset: 2px;
+}
+
+/* ==========================================================================
+   404 / not-found page
+   ========================================================================== */
+.not-found {
+	text-align: center;
+	padding: var(--space-16) var(--space-4);
+}
+
+.not-found-code {
+	font-family: var(--font-mono);
+	font-size: clamp(4rem, 18vw, 9rem);
+	line-height: 1;
+	font-weight: 700;
+	color: var(--color-primary);
+	margin: 0;
+}
+
+.not-found-title {
+	margin: var(--space-4) 0 var(--space-2);
+}
+
+.not-found-message {
+	color: var(--color-text-secondary);
+	max-width: 38ch;
+	margin: 0 auto var(--space-6);
+}
+
+.not-found-home {
+	font-family: var(--font-mono);
+	font-size: var(--font-size-sm);
 }

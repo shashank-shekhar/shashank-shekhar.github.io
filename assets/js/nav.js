@@ -119,6 +119,53 @@
 			clearTimeout(timer);
 			timer = setTimeout(update, 80);
 		});
+
+		setupDropdownToggles();
+	}
+
+	// Tap/click to open dropdowns. The menus otherwise open only via CSS :hover,
+	// so on touch devices the "More" overflow (which can hold several nav
+	// destinations) and any folder dropdown were unreachable. Delegated so it
+	// covers both the JS-built overflow and template folder dropdowns, and keeps
+	// aria-expanded in sync.
+	function setupDropdownToggles() {
+		function closeAll(except) {
+			var open = document.querySelectorAll('.navbar-dropdown.is-open');
+			for (var i = 0; i < open.length; i++) {
+				if (open[i] === except) continue;
+				open[i].classList.remove('is-open');
+				var t = open[i].querySelector('.dropdown-toggle');
+				if (t) t.setAttribute('aria-expanded', 'false');
+			}
+		}
+
+		document.addEventListener('click', function (e) {
+			var toggle = e.target.closest ? e.target.closest('.dropdown-toggle') : null;
+			if (!toggle) {
+				closeAll(null); // outside click closes everything
+				return;
+			}
+			var dropdown = toggle.closest('.navbar-dropdown');
+			if (!dropdown) return;
+			// A folder toggle is a real link to that folder's own index (e.g.
+			// "Blog" -> /blog/). Where :hover is real (mouse/trackpad), the CSS
+			// above already reveals the dropdown on hover, so let the click
+			// navigate through instead of trapping the folder's own page behind
+			// a toggle-only interaction. Only intercept on touch/coarse pointers,
+			// which have no hover and need the tap to open the menu instead.
+			if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+				return;
+			}
+			e.preventDefault();
+			var willOpen = !dropdown.classList.contains('is-open');
+			closeAll(dropdown);
+			dropdown.classList.toggle('is-open', willOpen);
+			toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+		});
+
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape') closeAll(null);
+		});
 	}
 
 	if (document.readyState === 'loading') {
